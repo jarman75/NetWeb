@@ -1,4 +1,4 @@
-##Capa presentación (UI)
+## Capa presentación (UI)
 ### WebFormsApp
 Aplicacion webForms (Net)
   
@@ -8,7 +8,7 @@ Aplicación blazor (.Net Core)
 
   
 
-##Capa Acceso a datos (DAL)
+## Capa Acceso a datos (DAL)
 
 ### Example.DAL
 Libreria (Net Standard)

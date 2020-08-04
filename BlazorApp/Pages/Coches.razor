@@ -1,0 +1,147 @@
+﻿@page "/coches"
+@using Example.DAL.DataModels
+
+<h3>Coches</h3>
+
+<button @onclick="@Add" class="btn btn-success">Añadir nuevo coche</button>
+
+@if (coches == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class='table table-hover'>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Matricula</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Numero de Puertas</th>
+                <th>Tipo de Combustible</th>
+                <th>Precio Alquiler Día</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in coches)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Matricula</td>
+                    <td>@item.Marca</td>
+                    <td>@item.Modelo</td>
+                    <td>@item.NumeroPuertas</td>
+                    <td>@item.TipoCombustible</td>
+                    <td>@item.PrecioAlquilerDia</td>
+                    <td><button @onclick="@(() => Edit(item.Id))" class="btn btn-info">Edit</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (mode == MODE.Add || mode == MODE.EditDelete)
+{
+    <input type="hidden" @bind="@coche.Id" />
+    <br />
+    <input placeholder="Matricula" @bind="@coche.Matricula" />
+    <br />
+    <input placeholder="Marca" @bind="@coche.Marca" />
+    <br />
+    <input placeholder="Modelo" @bind="@coche.Modelo" />
+    <br />
+    <input placeholder="Numero de Puertas" @bind="@coche.NumeroPuertas" />
+    <br />
+    <input placeholder="Tipo de Combustible" @bind="@coche.TipoCombustible" />
+    <br />
+    <input placeholder="Precio Alquiler Día" @bind="@coche.PrecioAlquilerDia" />
+    <br />
+    @if (mode == MODE.Add)
+    {
+        <button @onclick="@Insert" class="btn btn-warning">Insert</button>
+    }
+    else
+    {
+        <button @onclick="@Update" class="btn btn-warning">Update</button>
+        <button @onclick="@Delete" class="btn btn-danger">Delete</button>
+    }
+    <button @onclick="@Cancel" class="btn btn-secondary">Cancel</button>
+
+}
+@code {
+
+    enum MODE { None, Add, EditDelete };
+    MODE mode = MODE.None;
+    IEnumerable<Coche> coches;
+    Coche coche;
+
+
+
+    protected override void OnInitialized()
+    {
+        ClearFields();
+        Load();
+
+    }
+
+    protected void Load()
+    {
+        coches = Example.DAL.DataContext.GetCoches();
+    }
+
+    protected void Add()
+    {
+        ClearFields();
+        mode = MODE.Add;
+
+    }
+
+    protected int Edit(Guid id)
+    {
+        mode = MODE.EditDelete;
+        coche = Example.DAL.DataContext.GetCoche(id);
+        return 0;
+    }
+
+
+
+    protected void ClearFields()
+    {
+        coche = new Coche();
+    }
+
+    protected void Insert()
+    {
+        coche.Id = Guid.NewGuid();
+
+        Example.DAL.DataContext.AddCoche(coche);
+        ClearFields();
+        mode = MODE.None;
+        Load();
+    }
+
+    protected void Cancel()
+    {
+
+        ClearFields();
+        mode = MODE.None;
+    }
+
+    protected void Update()
+    {
+        Example.DAL.DataContext.UpdateCoche(coche);
+        ClearFields();
+        mode = MODE.None;
+        Load();
+    }
+    protected void Delete()
+    {
+        Example.DAL.DataContext.DeleteCoche(coche.Id);
+        ClearFields();
+        mode = MODE.None;
+        Load();
+    }
+}
